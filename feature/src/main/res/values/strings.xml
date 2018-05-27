@@ -1,2 +1,19 @@
 <resources>
+    <string-array name="countryNames">
+        <item>AUD</item>
+        <item>CAD</item>
+        <item>EUR</item>
+        <item>USD</item>
+        <item>NZD</item>
+        <item>DKK</item>
+        <item>HKD</item>
+        <item>INR</item>
+        <item>MXN</item>
+        <item>SGD</item>
+        <item>CHF</item>
+        <item>GBP</item>
+        <item>JPY</item>
+        <item>CNY</item>
+
+    </string-array>
 </resources>
