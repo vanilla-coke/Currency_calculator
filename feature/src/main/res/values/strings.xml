@@ -1,9 +1,9 @@
 <resources>
     <string-array name="countryNames">
-        <item>AUD</item>
         <item>CAD</item>
-        <item>EUR</item>
         <item>USD</item>
+        <item>EUR</item>
+        <item>AUS</item>
         <item>NZD</item>
         <item>DKK</item>
         <item>HKD</item>
@@ -14,6 +14,5 @@
         <item>GBP</item>
         <item>JPY</item>
         <item>CNY</item>
-
     </string-array>
 </resources>

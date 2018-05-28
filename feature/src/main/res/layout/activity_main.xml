@@ -44,8 +44,7 @@
                 android:id="@+id/currency_spinner1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                />
+                android:layout_alignParentLeft="true" />
 
             <TextView
                 android:id="@+id/first_currency"
@@ -68,7 +67,7 @@
                 android:layout_below="@+id/first_currency"
                 android:layout_marginRight="10dp"
                 android:fontFamily="sans-serif"
-                android:text="Currency 1"
+                android:text="Canadian Dollar"
 
 
                 />
@@ -110,7 +109,7 @@
                 android:layout_below="@+id/second_currency"
                 android:layout_marginRight="10dp"
                 android:fontFamily="sans-serif"
-                android:text="Currency 2" />
+                android:text="United States dollar" />
 
 
         </RelativeLayout>
@@ -119,15 +118,14 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@drawable/currency_background_container"
-
-            >
+            android:background="@drawable/currency_background_container">
 
             <Spinner
                 android:id="@+id/currency_spinner3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
+
 
                 />
 
@@ -151,7 +149,7 @@
                 android:layout_below="@+id/third_currency"
                 android:layout_marginRight="10dp"
                 android:fontFamily="sans-serif"
-                android:text="Currency 3" />
+                android:text="Euro" />
 
 
         </RelativeLayout>
