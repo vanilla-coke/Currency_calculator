@@ -14,19 +14,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/currency_background_container"
-        >
+        android:background="@drawable/currency_background_container">
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="5sp"
             android:fontFamily="sans-serif"
             android:text="Currency Converter"
-            android:layout_marginTop="5sp"
             android:textAlignment="center"
-            android:textSize="20sp"
             android:textColor="#000000"
+            android:textSize="20sp"
 
-           />
+            />
     </android.support.v7.widget.Toolbar>
 
 
@@ -52,8 +52,7 @@
                 android:id="@+id/currency_spinner1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                />
+                android:layout_alignParentLeft="true" />
 
             <TextView
                 android:id="@+id/first_currency"

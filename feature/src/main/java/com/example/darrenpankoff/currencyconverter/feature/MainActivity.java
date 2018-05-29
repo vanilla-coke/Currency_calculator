@@ -44,11 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
     /*
         total_currency simply keeps track of the total amount the user wants to calculate an exchange rate for
+
      */
 
     private String total_currency = "";
-    private String currency_to_currency2 = "";
-    private String currency_to_currency3 = "";
+
 
 
     /*
@@ -71,20 +71,22 @@ public class MainActivity extends AppCompatActivity {
 
 
     /*
-        These are our spinners, they are final because the content inside will not change.
+        These are the spinners where users can select which country they want the exchange rates for
      */
 
-    private  Spinner spinner1 = (Spinner) findViewById(R.id.currency_spinner1);
-    private  Spinner spinner2 = (Spinner) findViewById(R.id.currency_spinner2);
-    private  Spinner spinner3 = (Spinner) findViewById(R.id.currency_spinner3);
+    private Spinner spinner1 = (Spinner) findViewById(R.id.currency_spinner1);
+    private Spinner spinner2 = (Spinner) findViewById(R.id.currency_spinner2);
+    private Spinner spinner3 = (Spinner) findViewById(R.id.currency_spinner3);
 
     // count is simply a flag variable used to determine if this is the program loading for the first time or whether a change has been made
     // it is used for the spinners
 
     private boolean first_time = true;
 
-    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.countryNames, android.R.layout.simple_list_item_1);
+    ArrayAdapter<CharSequence> adapter_for_countryCodes = ArrayAdapter.createFromResource(this, R.array.countryNames, android.R.layout.simple_list_item_1);
     // contains list of items in spinners
+
+    ArrayAdapter<CharSequence> adapter_for_countryDescriptions = ArrayAdapter.createFromResource(this, R.array.countryDescriptions, android.R.layout.simple_list_item_1);
 
     GetCountries api_access = new GetCountries(); // use this to make async API calls
 
@@ -95,9 +97,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        spinner1.setAdapter(adapter); // set the values of the spinner from strings.xml - countryNames
-        spinner2.setAdapter(adapter);
-        spinner3.setAdapter(adapter);
+        spinner1.setAdapter(adapter_for_countryDescriptions); // set the values of the spinner from strings.xml - countryNames
+        spinner2.setAdapter(adapter_for_countryDescriptions);
+        spinner3.setAdapter(adapter_for_countryDescriptions);
+
+        for (int i = 0; i < adapter_for_countryCodes.getCount(); i++) {
+            countries_and_descriptions.put(adapter_for_countryDescriptions.getItem(i).toString(), adapter_for_countryCodes.getItem(i).toString());
+        }
+
 
         /*
             Below we want to handle the user selecting a new country from the spinner list.
@@ -107,32 +114,35 @@ public class MainActivity extends AppCompatActivity {
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                if(first_time){
-                    spinner1.setSelection(0); // set the default spinner values NOTE: only need to do this once upon initialization
-                    spinner2.setSelection(1);
-                    spinner3.setSelection(2);
+                if (first_time) {
+                    spinner1.setSelection(adapter_for_countryDescriptions.getPosition("CAD")); // set the default spinner values NOTE: only need to do this once upon initialization
+                    spinner2.setSelection(adapter_for_countryDescriptions.getPosition("USD"));
+                    spinner3.setSelection(adapter_for_countryDescriptions.getPosition("EUR"));
                     first_time = !first_time; // set flag to false
 
 
-                }else{
-                    country1_code = spinner1.getSelectedItem().toString(); // change the country code
+                } else {
+                    country1_code = countries_and_descriptions.get(spinner1.getSelectedItem().toString()); // change the country code
                     TextView first_country = (TextView) findViewById(R.id.first_currency_desc);
-                    first_country.setText(country1_code); // NEED HASHMAP
+                    first_country.setText(country1_code);
 
                     // check if 1 vs 2 are same countries, and 1 vs 3 are same. If they are the exchange rate is just equal i.e. 1:1
-                    if(country1_code.equals(country2_code)){
+                    if (country1_code.equals(country2_code)) {
                         second_currency_rate = 1.0;
-                    } else if(country1_code.equals(country3_code)){
+                    } else {
+                        second_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country2_code));
+                    }
+
+                    if (country1_code.equals(country3_code)) {
                         third_currency_rate = 1.0;
 
-                    }else{
-                        second_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country2_code));
+                    } else {
                         third_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country3_code));
                     }
                 }
                 display();
 
-                }
+            }
 
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
@@ -144,13 +154,14 @@ public class MainActivity extends AppCompatActivity {
         spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                country2_code = spinner2.getSelectedItem().toString();
+                country2_code = countries_and_descriptions.get(spinner2.getSelectedItem().toString());
                 TextView second_country = (TextView) findViewById(R.id.second_currency_rate_desc);
-                second_country.setText(country2_code); //HASHMAP
+                second_country.setText(country2_code);
 
-                if(country1_code.equals(country2_code)){
+
+                if (country1_code.equals(country2_code)) {
                     second_currency_rate = 1.0;
-                }else{
+                } else {
                     second_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country2_code));
                 }
                 display();
@@ -166,13 +177,14 @@ public class MainActivity extends AppCompatActivity {
         spinner3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                country3_code = spinner3.getSelectedItem().toString();
-                TextView second_country = (TextView) findViewById(R.id.third_currency_rate_desc);
-                second_country.setText(country3_code); //HASHMAP
+                country3_code = countries_and_descriptions.get(spinner3.getSelectedItem().toString());
+                TextView third_country = (TextView) findViewById(R.id.third_currency_rate_desc);
+                third_country.setText(country3_code);
 
-                if(country1_code.equals(country3_code)){
+
+                if (country1_code.equals(country3_code)) {
                     third_currency_rate = 1.0;
-                }else{
+                } else {
                     third_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country3_code));
                 }
                 display();
@@ -199,21 +211,21 @@ public class MainActivity extends AppCompatActivity {
     static private class GetCountries extends AsyncTask<String, Void, String> {
 
         private String api_base_url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE";
-        private final String key = "API KEY";
+        private final String key = "API KEY"; // ADD API KEY HERE
         private String api_results = "";
 
 
         @Override
-        protected String doInBackground(String... params){
+        protected String doInBackground(String... params) {
 
-            try{
+            try {
                 URL api = new URL(api_base_url + "&from_currency=" + params[0] + "&to_currency=" + params[1] + "&apikey=" + key);
                 HttpsURLConnection urlConnection = (HttpsURLConnection) api.openConnection();
-                try{
+                try {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                     StringBuilder my_string = new StringBuilder();
                     String current_line;
-                    while((current_line = bufferedReader.readLine())!= null){
+                    while ((current_line = bufferedReader.readLine()) != null) {
                         my_string.append(current_line).append("\n");
                     }
                     bufferedReader.close();
@@ -221,11 +233,10 @@ public class MainActivity extends AppCompatActivity {
                     return api_results; // return the results to the caller
 
 
-                }finally {
+                } finally {
                     urlConnection.disconnect();
                 }
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 Log.e("ERROR DETECTED", e.getMessage(), e);
                 return null;
             }
@@ -233,13 +244,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String response){
+        protected void onPostExecute(String response) {
 
-            if (response == null){
+            if (response == null) {
                 response = "ERROR OCCURRED FETCHING DATA";
             }
 
-            try{
+            try {
                 JSONObject obj = new JSONObject(response);
 
                 JSONArray results = new JSONArray(obj.getString("Realtime Currency Exchange Rate"));
@@ -250,45 +261,12 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.i("RESULTS", response);
 
-            }catch (JSONException e){
+            } catch (JSONException e) {
                 Log.i("ERROR PARSING JSON", e.toString());
 
             }
 
         }
-
-
-    }
-
-    /*
-        This is the portion that controls the spinner. Upon the user selecting a new item from the spinner, the program must
-        correctly update the currency exchange rates, and then refresh the display to the user.
-     */
-
-
-
-
-
-    public class Spinner_activity extends Activity implements AdapterView.OnItemSelectedListener{
-
-
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            Spinner currentSpinner = (Spinner) findViewById(view.getId());
-            String selectedItem = currentSpinner.getSelectedItem().toString();
-            int currentId = view.getId();
-
-
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-
-        }
-    }
-
-    public void set_spinners(Spinner spinner){
 
 
     }
@@ -310,124 +288,84 @@ public class MainActivity extends AppCompatActivity {
                 if (selected_currency != 0 && !decimalClicked) {
                     total_currency += "0";
                     selected_currency *= 10;
-
                 }
                 // note if the decimal is clicked, adding a zero does not change the value therefore do nothing.
             } else if (result == R.id.num1) {
-                if (decimalClicked) {
-                    total_currency += "1";
-                    selected_currency = Double.parseDouble(total_currency);
-
-                } else {
-                    selected_currency++;
+                total_currency += "1";
+                selected_currency = Double.parseDouble(total_currency);
 
 
-                }
             } else if (result == R.id.num2) {
-                if (decimalClicked) {
-                    total_currency += "2";
-                    selected_currency = Double.parseDouble(total_currency);
 
+                total_currency += "2";
+                selected_currency = Double.parseDouble(total_currency);
 
-                } else {
-                    selected_currency++;
-
-
-                }
             } else if (result == R.id.num3) {
-                if (decimalClicked) {
-                    total_currency += "3";
-                    selected_currency = Double.parseDouble(total_currency);
+
+                total_currency += "3";
+                selected_currency = Double.parseDouble(total_currency);
 
 
-                } else {
-                    selected_currency++;
-
-
-                }
             } else if (result == R.id.num4) {
-                if (decimalClicked) {
-                    total_currency += "4";
-                    selected_currency = Double.parseDouble(total_currency);
+                total_currency += "4";
+                selected_currency = Double.parseDouble(total_currency);
 
 
-                } else {
-                    selected_currency++;
-
-
-                }
             } else if (result == R.id.num5) {
-                if (decimalClicked) {
-                    total_currency += "5";
-                    selected_currency = Double.parseDouble(total_currency);
+
+                total_currency += "5";
+                selected_currency = Double.parseDouble(total_currency);
 
 
-                } else {
-                    selected_currency++;
-
-
-                }
             } else if (result == R.id.num6) {
-                if (decimalClicked) {
-                    total_currency += "6";
-                    selected_currency = Double.parseDouble(total_currency);
+
+                total_currency += "6";
+                selected_currency = Double.parseDouble(total_currency);
 
 
-                } else {
-                    selected_currency++;
-
-
-                }
             } else if (result == R.id.num7) {
-                if (decimalClicked) {
-                    total_currency += "7";
-                    selected_currency = Double.parseDouble(total_currency);
+
+                total_currency += "7";
+                selected_currency = Double.parseDouble(total_currency);
 
 
-                } else {
-                    selected_currency++;
-
-
-                }
             } else if (result == R.id.num8) {
-                if (decimalClicked) {
-                    total_currency += "8";
-                    selected_currency = Double.parseDouble(total_currency);
+
+                total_currency += "8";
+                selected_currency = Double.parseDouble(total_currency);
 
 
-                } else {
-                    selected_currency++;
-
-
-                }
             } else if (result == R.id.num9) {
-                if (decimalClicked) {
-                    total_currency += "9";
-                    selected_currency = Double.parseDouble(total_currency);
+
+                total_currency += "9";
+                selected_currency = Double.parseDouble(total_currency);
 
 
-                } else {
-                    selected_currency++;
-
-
-                }
             } else if (result == R.id.decimal) {
-                if(!decimalClicked){
+                if (!decimalClicked) {
                     total_currency += ".0";
                     decimalClicked = true;
+                    selected_currency = Double.parseDouble(total_currency);
                 }
             } else if (result == R.id.clear) {
                 selected_currency = 0.0;
-                total_currency = "";
+                total_currency = "0.0";
 
             } else if (result == R.id.deletePrev) {
-                if (selected_currency != 0.0) {
+                if (selected_currency > 0) {
                     total_currency = total_currency.substring(0, total_currency.length() - 1);
+                    if (total_currency.charAt(total_currency.length() - 1) == '.') {
+                        total_currency = total_currency.substring(0, total_currency.length() - 1);
+                        // this is the case where we deleted a decimal value e.g. 1.3 (remove the 3) we would be left with 1.
+                        // therefore we need to delete the extra decimal.
+                        decimalClicked = false;
+                    }
                     selected_currency = Double.parseDouble(total_currency);
                 }
             }
+            display(); // no matter what we want to call display;
         }
-        display(); // no matter what we want to call display;
+
     }
 
 
@@ -435,16 +373,22 @@ public class MainActivity extends AppCompatActivity {
 
         /*
             Here we simply convert the currency rates and then format them to strings with 3 decimal places
+
          */
+        String currency1_to_currency2 = "";
+        String currency1_to_currency3 = "";
+
+        Double temp = selected_currency * second_currency_rate;
+        temp = selected_currency * third_currency_rate;
+
 
         total_currency = String.format("%.3f", selected_currency);
 
-        Double tmp = selected_currency * second_currency_rate;
-        currency_to_currency2 = String.format("%.3f", tmp.toString());
+
+        currency1_to_currency2 = String.format("%.3f", temp.toString());
 
 
-        tmp = selected_currency * third_currency_rate;
-        currency_to_currency3 = String.format("%.3f", tmp.toString());
+        currency1_to_currency3 = String.format("%.3f", temp.toString());
 
 
         /*
@@ -458,27 +402,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         TextView secondCurrency = (TextView) findViewById(R.id.second_currency_rate);
-        secondCurrency.setText(currency_to_currency2);
+        secondCurrency.setText(currency1_to_currency2);
 
 
         TextView thirdCurrency = (TextView) findViewById(R.id.third_currency_rate);
-        thirdCurrency.setText(currency_to_currency3);
-
-        /*
-                Here we set the text below the currency amounts to display the proper country description
-                e.g. CAD = Canadian Dollars
-         */
-
-        TextView currentDesc = (TextView) findViewById(R.id.first_currency_desc);
-        currentDesc.setText(country1_code);
+        thirdCurrency.setText(currency1_to_currency3);
 
 
-        TextView secondCurrencyDesc = (TextView) findViewById(R.id.second_currency_rate_desc);
-        secondCurrencyDesc.setText(country2_code);
-
-
-        TextView thirdCurrencyDesc = (TextView) findViewById(R.id.third_currency_rate_desc);
-        thirdCurrencyDesc.setText(country3_code);
     }
 
 
