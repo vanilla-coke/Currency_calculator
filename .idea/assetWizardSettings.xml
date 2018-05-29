@@ -40,13 +40,24 @@
                                           </PersistentState>
                                         </value>
                                       </entry>
+                                      <entry key="foregroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="63" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
                                     </map>
                                   </option>
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundAssetType" value="CLIP_ART" />
-                                      <entry key="foregroundLayerName" value="ic_launcher_foreground" />
+                                      <entry key="foregroundImage" value="$PROJECT_DIR$/../../Screen Shot 2018-05-27 at 10.00.06 PM.png" />
+                                      <entry key="foregroundLayerName" value="screenShot" />
                                       <entry key="outputName" value="del_arrow" />
                                     </map>
                                   </option>

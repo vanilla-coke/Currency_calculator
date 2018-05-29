@@ -2,6 +2,7 @@
 
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,13 +13,20 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
+        android:layout_weight="1"
+        android:background="@drawable/currency_background_container"
+        >
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fontFamily="sans-serif"
+            android:text="Currency Converter"
+            android:layout_marginTop="5sp"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textColor="#000000"
 
-            />
+           />
     </android.support.v7.widget.Toolbar>
 
 
@@ -27,7 +35,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="2dp"
         android:layout_marginTop="2sp"
-        android:layout_weight="3"
+        android:layout_weight="5"
         android:background="#a9fff2"
         android:orientation="vertical"
 
@@ -44,7 +52,8 @@
                 android:id="@+id/currency_spinner1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignParentLeft="true" />
+                android:layout_alignParentLeft="true"
+                />
 
             <TextView
                 android:id="@+id/first_currency"
@@ -90,7 +99,7 @@
                 />
 
             <TextView
-                android:id="@+id/second_currency"
+                android:id="@+id/second_currency_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -102,11 +111,11 @@
                 />
 
             <TextView
-                android:id="@+id/second_currency_desc"
+                android:id="@+id/second_currency_rate_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/second_currency"
+                android:layout_below="@+id/second_currency_rate"
                 android:layout_marginRight="10dp"
                 android:fontFamily="sans-serif"
                 android:text="United States dollar" />
@@ -130,7 +139,7 @@
                 />
 
             <TextView
-                android:id="@+id/third_currency"
+                android:id="@+id/third_currency_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -142,11 +151,11 @@
                 />
 
             <TextView
-                android:id="@+id/third_currency_desc"
+                android:id="@+id/third_currency_rate_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/third_currency"
+                android:layout_below="@+id/third_currency_rate"
                 android:layout_marginRight="10dp"
                 android:fontFamily="sans-serif"
                 android:text="Euro" />
@@ -161,7 +170,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_weight="7"
         android:orientation="vertical">
 
         <LinearLayout

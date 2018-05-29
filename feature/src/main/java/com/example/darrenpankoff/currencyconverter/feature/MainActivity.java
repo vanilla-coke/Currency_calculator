@@ -1,10 +1,12 @@
 package com.example.darrenpankoff.currencyconverter.feature;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         represent the values of the exchange rates (e.g. CAD to USD, CAD to EUR)
         These change based on the selected countries
      */
-    private double second_currency = 0.0;
-    private double third_currency = 0.0;
+    private double second_currency_rate = 0.0;
+    private double third_currency_rate = 0.0;
 
     /*
         this variable simply keeps track of whether the user wants to calculate a decimal value
@@ -65,16 +67,26 @@ public class MainActivity extends AppCompatActivity {
         HashMap contains the country code as well as a description of the currency e.g. <CAD, Canadian Dollars>
      */
 
-    HashMap<String, String> countries_and_descriptions = new HashMap<>(); // perhaps use Data.java to read in file and create this
+    HashMap<String, String> countries_and_descriptions = new HashMap<>(); // perhaps read in text file
 
 
     /*
         These are our spinners, they are final because the content inside will not change.
      */
 
-    private final Spinner spinner1 = (Spinner) findViewById(R.id.currency_spinner1);
-    private final Spinner spinner2 = (Spinner) findViewById(R.id.currency_spinner2);
-    private final Spinner spinner3 = (Spinner) findViewById(R.id.currency_spinner3);
+    private  Spinner spinner1 = (Spinner) findViewById(R.id.currency_spinner1);
+    private  Spinner spinner2 = (Spinner) findViewById(R.id.currency_spinner2);
+    private  Spinner spinner3 = (Spinner) findViewById(R.id.currency_spinner3);
+
+    // count is simply a flag variable used to determine if this is the program loading for the first time or whether a change has been made
+    // it is used for the spinners
+
+    private boolean first_time = true;
+
+    ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.countryNames, android.R.layout.simple_list_item_1);
+    // contains list of items in spinners
+
+    GetCountries api_access = new GetCountries(); // use this to make async API calls
 
 
     @Override
@@ -82,22 +94,98 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GetCountries api_access = new GetCountries(); // use this to make async calls
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.countryNames, android.R.layout.simple_list_item_1);
         spinner1.setAdapter(adapter); // set the values of the spinner from strings.xml - countryNames
-        spinner1.setSelection(0); // set the default spinner values
         spinner2.setAdapter(adapter);
-        spinner2.setSelection(1);
         spinner3.setAdapter(adapter);
-        spinner3.setSelection(2);
 
         /*
-            Here we get the default exchange values that will be used when application is initialized
-
+            Below we want to handle the user selecting a new country from the spinner list.
+            We also deal with setting the initial spinner values upon program initialization
          */
-        second_currency = Double.parseDouble(api_access.doInBackground(country1_code, country2_code));
-        third_currency = Double.parseDouble(api_access.doInBackground(country1_code, country3_code));
+
+        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if(first_time){
+                    spinner1.setSelection(0); // set the default spinner values NOTE: only need to do this once upon initialization
+                    spinner2.setSelection(1);
+                    spinner3.setSelection(2);
+                    first_time = !first_time; // set flag to false
+
+
+                }else{
+                    country1_code = spinner1.getSelectedItem().toString(); // change the country code
+                    TextView first_country = (TextView) findViewById(R.id.first_currency_desc);
+                    first_country.setText(country1_code); // NEED HASHMAP
+
+                    // check if 1 vs 2 are same countries, and 1 vs 3 are same. If they are the exchange rate is just equal i.e. 1:1
+                    if(country1_code.equals(country2_code)){
+                        second_currency_rate = 1.0;
+                    } else if(country1_code.equals(country3_code)){
+                        third_currency_rate = 1.0;
+
+                    }else{
+                        second_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country2_code));
+                        third_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country3_code));
+                    }
+                }
+                display();
+
+                }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // do not do anything
+            }
+
+        });
+
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                country2_code = spinner2.getSelectedItem().toString();
+                TextView second_country = (TextView) findViewById(R.id.second_currency_rate_desc);
+                second_country.setText(country2_code); //HASHMAP
+
+                if(country1_code.equals(country2_code)){
+                    second_currency_rate = 1.0;
+                }else{
+                    second_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country2_code));
+                }
+                display();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // do not do anything
+            }
+
+        });
+
+        spinner3.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                country3_code = spinner3.getSelectedItem().toString();
+                TextView second_country = (TextView) findViewById(R.id.third_currency_rate_desc);
+                second_country.setText(country3_code); //HASHMAP
+
+                if(country1_code.equals(country3_code)){
+                    third_currency_rate = 1.0;
+                }else{
+                    third_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country3_code));
+                }
+                display();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // do not do anything
+            }
+
+        });
+
 
     }
 
@@ -172,6 +260,39 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*
+        This is the portion that controls the spinner. Upon the user selecting a new item from the spinner, the program must
+        correctly update the currency exchange rates, and then refresh the display to the user.
+     */
+
+
+
+
+
+    public class Spinner_activity extends Activity implements AdapterView.OnItemSelectedListener{
+
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            Spinner currentSpinner = (Spinner) findViewById(view.getId());
+            String selectedItem = currentSpinner.getSelectedItem().toString();
+            int currentId = view.getId();
+
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    }
+
+    public void set_spinners(Spinner spinner){
+
+
+    }
+
 
     /*
         This code below is for the calculator portion of the code.
@@ -181,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
         resource ID's cannot be used in a switch statement therefore needed to use if else
      */
 
+
     public void CalcButtonClick(View v) {
         int result = v.getId();
         if (total_currency.length() <= 14) {
@@ -188,111 +310,112 @@ public class MainActivity extends AppCompatActivity {
                 if (selected_currency != 0 && !decimalClicked) {
                     total_currency += "0";
                     selected_currency *= 10;
-                    display();
+
                 }
                 // note if the decimal is clicked, adding a zero does not change the value therefore do nothing.
             } else if (result == R.id.num1) {
                 if (decimalClicked) {
                     total_currency += "1";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.num2) {
                 if (decimalClicked) {
                     total_currency += "2";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
+
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.num3) {
                 if (decimalClicked) {
                     total_currency += "3";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
+
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.num4) {
                 if (decimalClicked) {
                     total_currency += "4";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
+
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.num5) {
                 if (decimalClicked) {
                     total_currency += "5";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
+
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.num6) {
                 if (decimalClicked) {
                     total_currency += "6";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
+
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.num7) {
                 if (decimalClicked) {
                     total_currency += "7";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
+
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.num8) {
                 if (decimalClicked) {
                     total_currency += "8";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
+
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.num9) {
                 if (decimalClicked) {
                     total_currency += "9";
                     selected_currency = Double.parseDouble(total_currency);
-                    display();
+
 
                 } else {
                     selected_currency++;
-                    display();
+
 
                 }
             } else if (result == R.id.decimal) {
-                decimalClicked = !decimalClicked;
-
+                if(!decimalClicked){
+                    total_currency += ".0";
+                    decimalClicked = true;
+                }
             } else if (result == R.id.clear) {
                 selected_currency = 0.0;
                 total_currency = "";
@@ -304,6 +427,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        display(); // no matter what we want to call display;
     }
 
 
@@ -315,11 +439,11 @@ public class MainActivity extends AppCompatActivity {
 
         total_currency = String.format("%.3f", selected_currency);
 
-        Double tmp = selected_currency * second_currency;
+        Double tmp = selected_currency * second_currency_rate;
         currency_to_currency2 = String.format("%.3f", tmp.toString());
 
 
-        tmp = selected_currency * third_currency;
+        tmp = selected_currency * third_currency_rate;
         currency_to_currency3 = String.format("%.3f", tmp.toString());
 
 
@@ -333,11 +457,11 @@ public class MainActivity extends AppCompatActivity {
         current.setText(total_currency);
 
 
-        TextView secondCurrency = (TextView) findViewById(R.id.second_currency);
+        TextView secondCurrency = (TextView) findViewById(R.id.second_currency_rate);
         secondCurrency.setText(currency_to_currency2);
 
 
-        TextView thirdCurrency = (TextView) findViewById(R.id.third_currency);
+        TextView thirdCurrency = (TextView) findViewById(R.id.third_currency_rate);
         thirdCurrency.setText(currency_to_currency3);
 
         /*
@@ -349,11 +473,11 @@ public class MainActivity extends AppCompatActivity {
         currentDesc.setText(country1_code);
 
 
-        TextView secondCurrencyDesc = (TextView) findViewById(R.id.second_currency_desc);
+        TextView secondCurrencyDesc = (TextView) findViewById(R.id.second_currency_rate_desc);
         secondCurrencyDesc.setText(country2_code);
 
 
-        TextView thirdCurrencyDesc = (TextView) findViewById(R.id.third_currency_desc);
+        TextView thirdCurrencyDesc = (TextView) findViewById(R.id.third_currency_rate_desc);
         thirdCurrencyDesc.setText(country3_code);
     }
 
