@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private String total_currency = "";
 
 
-
     /*
         The strings below will simply keep track of the country currencies the user is wanting to compare
         The first country is the one being compared (e.g. CAD) and the rest will be the two countries to compare (e.g. USD, EUR)
@@ -96,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         spinner1.setAdapter(adapter_for_countryDescriptions); // set the values of the spinner from strings.xml - countryNames
         spinner2.setAdapter(adapter_for_countryDescriptions);
         spinner3.setAdapter(adapter_for_countryDescriptions);
@@ -104,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < adapter_for_countryCodes.getCount(); i++) {
             countries_and_descriptions.put(adapter_for_countryDescriptions.getItem(i).toString(), adapter_for_countryCodes.getItem(i).toString());
         }
-
 
         /*
             Below we want to handle the user selecting a new country from the spinner list.
@@ -119,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                     spinner2.setSelection(adapter_for_countryDescriptions.getPosition("USD"));
                     spinner3.setSelection(adapter_for_countryDescriptions.getPosition("EUR"));
                     first_time = !first_time; // set flag to false
-
 
                 } else {
                     country1_code = countries_and_descriptions.get(spinner1.getSelectedItem().toString()); // change the country code
@@ -383,11 +379,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         total_currency = String.format("%.3f", selected_currency);
-
-
         currency1_to_currency2 = String.format("%.3f", temp.toString());
-
-
         currency1_to_currency3 = String.format("%.3f", temp.toString());
 
 
@@ -400,10 +392,8 @@ public class MainActivity extends AppCompatActivity {
         TextView current = (TextView) findViewById(R.id.first_currency);
         current.setText(total_currency);
 
-
         TextView secondCurrency = (TextView) findViewById(R.id.second_currency_rate);
         secondCurrency.setText(currency1_to_currency2);
-
 
         TextView thirdCurrency = (TextView) findViewById(R.id.third_currency_rate);
         thirdCurrency.setText(currency1_to_currency3);
