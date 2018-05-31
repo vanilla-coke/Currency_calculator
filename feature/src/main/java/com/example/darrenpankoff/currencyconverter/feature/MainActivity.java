@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
         adapter_for_countryCodes = ArrayAdapter.createFromResource(this, R.array.countryNames, android.R.layout.simple_list_item_1);
         adapter_for_countryDescriptions = ArrayAdapter.createFromResource(this, R.array.countryDescriptions, android.R.layout.simple_list_item_1);
+        adapter_for_countryDescriptions.setDropDownViewResource(R.layout.spinner_dropdown); // set the layout of the spinner dropdown menu
 
         api_access = new GetCountries(); // create object for doing Async API calls
 
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
     static private class GetCountries extends AsyncTask<String, Void, String> {
 
         private String api_base_url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE";
-        private final String key = "MY API KEY"; // ADD YOUR OWN API KEY HERE
+        private final String key = "DBXVG3H0XRDSR4FW"; // ADD YOUR OWN API KEY HERE
         private String api_results = "";
 
 
