@@ -75,9 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean first_time = true;
 
     ArrayAdapter<CharSequence> adapter_for_countryCodes;
-    // contains list of items in spinners
-
-    ArrayAdapter<CharSequence> adapter_for_countryDescriptions;
+    ArrayAdapter<CharSequence> adapter_for_countryDescriptions; // contains list of items in spinners
 
     GetCountries api_access; // use this to make async API calls
 
@@ -111,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
         second_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country2_code));
         third_currency_rate = Double.parseDouble(api_access.doInBackground(country1_code, country3_code));
 
+
+
+
+
         /*
             Below we want to handle the user selecting a new country from the spinner list.
             We also deal with setting the initial spinner values upon program initialization
@@ -141,16 +143,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                     display();
                 }
-
-
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parentView) {
                 // do not do anything
             }
-
         });
+
+
 
         /*
             same as above
