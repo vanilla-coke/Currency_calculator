@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
     static private class GetCountries extends AsyncTask<String, Void, String> {
 
         private String api_base_url = "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE";
-        private final String key = "DBXVG3H0XRDSR4FW"; // ADD YOUR OWN API KEY HERE
+        private final String key = "ADD YOUR KEY"; // ADD YOUR OWN API KEY HERE
         private String api_results = "";
 
 
